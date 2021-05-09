@@ -6,8 +6,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type UUID string
-
 type Catalog struct {
 	Id   int    `gorm:"primaryKey;uniqueIndex;autoIncrement" mapKey:"ignore"`
 	Name string `gorm:"column:name;type:varchar(64);not null" mapKey:"name,omitempty"`
