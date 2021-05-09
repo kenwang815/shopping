@@ -5,6 +5,7 @@ import (
 
 	preparation "shopping/init"
 	"shopping/repository"
+	"shopping/rest"
 	"shopping/service"
 	"shopping/utils/log"
 )
@@ -27,4 +28,8 @@ func main() {
 	if err != nil {
 		log.Error(err)
 	}
+
+	// Init rest
+	router := rest.Init()
+	router.Run(":8080")
 }
