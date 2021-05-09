@@ -15,7 +15,7 @@ type catalogRepo struct {
 }
 
 func (r *catalogRepo) Create(d *catalog.Catalog) (*catalog.Catalog, error) {
-	md := r.db.Create(d)
+	md := r.db.Select("name", "hide").Create(d)
 	if err := md.Error; err != nil {
 		log.Errorf("catalogRepository Create fail => %+v", err)
 		return nil, err
@@ -54,7 +54,7 @@ func (r *catalogRepo) Update(d *catalog.Catalog) (*catalog.Catalog, int64, error
 	return re, affectRow, nil
 }
 
-func (r *catalogRepo) Delete(id catalog.UUID) (int64, error) {
+func (r *catalogRepo) Delete(id int) (int64, error) {
 	delete := r.db.Where("id = ?", id).Delete(&catalog.Catalog{})
 	row := delete.RowsAffected
 	var err error

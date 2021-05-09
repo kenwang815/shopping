@@ -46,7 +46,7 @@ func setupCatalogTestCaseSuite(t *testing.T) (CatalogTestCaseSuite, func(t *test
 
 func GetCatalog1() *catalog.Catalog {
 	return &catalog.Catalog{
-		Id:   "c9d7c314-fd95-448a-8db9-4756cc774f7d",
+		Id:   1,
 		Name: "food",
 		Hide: false,
 	}
@@ -54,23 +54,23 @@ func GetCatalog1() *catalog.Catalog {
 
 func GetCatalog2() *catalog.Catalog {
 	return &catalog.Catalog{
-		Id:   "99f970f5-b876-4c94-9190-34ee11d54edb",
-		Name: "food",
+		Id:   2,
+		Name: "water",
 		Hide: false,
 	}
 }
 
 func UpdateCatalog1() *catalog.Catalog {
 	return &catalog.Catalog{
-		Id:   "c9d7c314-fd95-448a-8db9-4756cc774f7d",
+		Id:   1,
 		Name: "food",
-		Hide: false,
+		Hide: true,
 	}
 }
 
 func UpdateCatalog2() *catalog.Catalog {
 	return &catalog.Catalog{
-		Id: "c9d7c314-fd95-448a-8db9-4756cc774f7d",
+		Id: 1,
 	}
 }
 
@@ -143,7 +143,7 @@ func TestCatalogDaos_Update(t *testing.T) {
 			},
 		},
 		{
-			name:        "ignore_uuid_update",
+			name:        "ignore_id_update",
 			testData:    UpdateCatalog2(),
 			wantResult:  nil,
 			rowAffected: 0,
@@ -181,7 +181,7 @@ func TestCatalogDaos_Delete(t *testing.T) {
 
 	tt := []struct {
 		name          string
-		id            catalog.UUID
+		id            int
 		rowAffected   int64
 		err           error
 		setupTestCase test.SetupSubTest
