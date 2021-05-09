@@ -5,6 +5,7 @@ import (
 
 	preparation "shopping/init"
 	"shopping/repository"
+	"shopping/service"
 	"shopping/utils/log"
 )
 
@@ -20,4 +21,10 @@ func main() {
 	}
 
 	e.Database.SetPool(10, 100, time.Hour)
+
+	// Init service
+	err = service.Init(cf, e)
+	if err != nil {
+		log.Error(err)
+	}
 }
