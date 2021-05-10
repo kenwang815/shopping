@@ -85,6 +85,11 @@ func (s *commodityService) Register(d *Commodity) (*Commodity, ErrorCode) {
 		return nil, ErrorCodeBadRequest
 	}
 
+	defaultTime := time.Time{}
+	if d.Name == "" || d.Description == "" || d.StartTime == defaultTime || d.EndTime == defaultTime {
+		return nil, ErrorCodeCommodityDBCreateFail
+	}
+
 	x, err := s.commodityRepo.Create(d.repoType())
 	if err != nil {
 		return nil, ErrorCodeCommodityDBCreateFail

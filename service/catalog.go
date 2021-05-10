@@ -65,6 +65,10 @@ func (s *catalogService) Register(d *Catalog) (*Catalog, ErrorCode) {
 		return nil, ErrorCodeBadRequest
 	}
 
+	if d.Name == "" {
+		return nil, ErrorCodeCatalogDBCreateFail
+	}
+
 	x, err := s.catalogRepo.Create(d.repoType())
 	if err != nil {
 		return nil, ErrorCodeCatalogDBCreateFail
