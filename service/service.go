@@ -25,7 +25,7 @@ func Init(cf *config.Config, engine *repository.Engine) error {
 	CommodityRepo = daos.NewCommodityRepo(engine.GormDB)
 
 	// === Service ===
-	CatalogService = NewCatalogService(CatalogRepo)
+	CatalogService = NewCatalogService(CatalogRepo, CommodityRepo)
 	CommodityService = NewCommodityService(CommodityRepo)
 
 	log.Info("Create service success")

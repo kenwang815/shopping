@@ -1,8 +1,11 @@
 package service
 
 import (
+	"time"
+
 	"shopping/model"
 	"shopping/model/catalog"
+	"shopping/model/commodity"
 	"shopping/utils/log"
 )
 
@@ -27,7 +30,8 @@ func (d *Catalog) Assemble(r *catalog.Catalog) {
 }
 
 type catalogService struct {
-	catalogRepo catalog.Repository
+	catalogRepo   catalog.Repository
+	commodityRepo commodity.Repository
 }
 
 func (s *catalogService) Find(d *Catalog, page *Page) ([]*Catalog, ErrorCode) {
@@ -58,6 +62,48 @@ func (s *catalogService) Find(d *Catalog, page *Page) ([]*Catalog, ErrorCode) {
 	}
 
 	return catalogs, ErrorCodeSuccess
+}
+
+func (s *catalogService) FindCommodity(i int, page *Page) ([]*Commodity, ErrorCode) {
+	p := &model.Page{}
+	if page != nil {
+		p.Limit = page.Number
+		p.Offset = page.Number * (page.Page - 1)
+	}
+
+	tmp, err := s.catalogRepo.Find(&catalog.Catalog{Id: i}, &model.Page{Limit: 1, Offset: 0})
+	if err != nil {
+		return nil, ErrorCodeCatalogDBFindFail
+	}
+
+	if len(tmp) == 0 {
+		return nil, ErrorCodeSuccessButNotFound
+	}
+
+	if tmp[0].Hide {
+		return nil, ErrorCodeNotFound
+	}
+
+	rows, err := s.commodityRepo.Find(&commodity.Commodity{CatalogId: i}, p)
+	if err != nil {
+		return nil, ErrorCodeCommodityDBFindFail
+	}
+
+	if len(rows) == 0 {
+		return nil, ErrorCodeSuccessButNotFound
+	}
+
+	currentTime := time.Now().UTC()
+	commoditys := []*Commodity{}
+	for _, v := range rows {
+		if v.Sell && v.StartTime.Before(currentTime) && v.EndTime.After(currentTime) {
+			srv := &Commodity{}
+			srv.Assemble(v)
+			commoditys = append(commoditys, srv)
+		}
+	}
+
+	return commoditys, ErrorCodeSuccess
 }
 
 func (s *catalogService) Register(d *Catalog) (*Catalog, ErrorCode) {
@@ -101,8 +147,9 @@ func (s *catalogService) Delete(id int) ErrorCode {
 	return ErrorCodeSuccess
 }
 
-func NewCatalogService(cr catalog.Repository) ICatalogService {
+func NewCatalogService(cr catalog.Repository, cor commodity.Repository) ICatalogService {
 	return &catalogService{
-		catalogRepo: cr,
+		catalogRepo:   cr,
+		commodityRepo: cor,
 	}
 }

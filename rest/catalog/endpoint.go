@@ -51,6 +51,35 @@ func FindCatalog(c *gin.Context) {
 	c.JSON(service.ErrorStatusCode(code), resp)
 }
 
+func FindCommodity(c *gin.Context) {
+	d, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "msg": "Page not found"})
+		return
+	}
+
+	page := &service.Page{}
+	c.ShouldBind(page)
+
+	rows, code := service.CatalogService.FindCommodity(d, page)
+	resp := content.NewContent()
+	if code == service.ErrorCodeSuccess {
+		data := make(map[string]interface{})
+		if page != nil {
+			data["page"] = page
+		}
+
+		data["datas"] = rows
+		resp.Data(data)
+	} else if code == service.ErrorCodeNotFound {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "msg": "Page not found"})
+		return
+	}
+
+	resp.Code(code.Int()).Msg(service.ErrorMsg(code))
+	c.JSON(service.ErrorStatusCode(code), resp)
+}
+
 func RegisterCatalog(c *gin.Context) {
 	catalog := &Catalog{}
 	c.ShouldBind(catalog)
