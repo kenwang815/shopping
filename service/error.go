@@ -51,6 +51,7 @@ const (
 	ErrorCodeServerErr ErrorCode = iota + 5000000
 	ErrorCodeDatabaseFail
 	ErrorCodeTokenCreateFail
+	ErrorCodeDataVerificationFail
 )
 
 // 500 01
@@ -74,6 +75,7 @@ var errorMsg = map[ErrorCode]string{
 	ErrorCodeSuccessButNotFound:    "Success with no affect rows",
 	ErrorCodeBadRequest:            "Bad request",
 	ErrorCodeTokenInvalid:          "Token invalid",
+	ErrorCodeDataVerificationFail:  "Data verification fail",
 	ErrorCodeForbidden:             "Forbidden",
 	ErrorCodeNotFound:              "Not found",
 	ErrorCodeServerErr:             "Internal server error",
